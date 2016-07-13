@@ -6,7 +6,7 @@ from pygame.locals import *
 
 # Number of frames per second
 # Change this value to speed up or slow down your game
-FPS = 10
+FPS = 50
 
 # Global Variables to be used through our program
 
@@ -42,8 +42,17 @@ def drawArena():
         pygame.draw.line(DISPLAYSURF, WHITE, (0, num), (WINDOWWIDTH, num), (LINETHICKNESS / 4))
 
 
+def getPaddleXY(paddle2):
+    paddle2X = paddle2.top
+    paddle2Y = paddle2.bottom
+    print ' Hit at location ', paddle2X, paddle2Y
+    # render text
+    label = BASICFONT.render(str(paddle2X / 38) + str(paddle2Y / 28), 1, (255, 99, 71))
+    DISPLAYSURF.blit(label, (paddle2X/38, paddle2Y/28))
+    return paddle2X,paddle2Y
+
 # Function to track ball is in which grid cell
-def trackBall(ball):
+def trackBall(ball, paddle2):
     cell = 0
     celly = 0
     global foundInCell, foundInCellY
@@ -64,7 +73,8 @@ def trackBall(ball):
     # render text
     label = myfont.render(str(cell) + str(celly), 1, (255, 255, 0))
     DISPLAYSURF.blit(label, (cell * 36, celly * 26))
-    print 'X,Y ', cell, celly
+    # getPaddleXY(paddle2)
+    # print 'X,Y ', cell, celly
 
 
 def displayMessage(startCount):
@@ -92,22 +102,22 @@ def drawPaddle(paddle):
 
 
 # draws the ball
-def drawBall(ball, ballDirX, ballDirY):
+def drawBall(ball, ballDirX, ballDirY, paddle2):
     global ballX_old, foundInCell, foundInCellY, ballY_old
     pygame.draw.rect(DISPLAYSURF, WHITE, ball)
-    trackBall(ball)
+    trackBall(ball, paddle2)
     if ballDirX == -1:  # left
         if ballX_old not in range(ball.x, ball.x + 38):
             ballX_old = ball.x
             if ballY_old not in range(ball.y, ball.y + 28):
                 ballY_old = ball.y
-                trackBall(ball)
+                trackBall(ball, paddle2)
     else:
         if ballX_old not in range(ball.x - 38, ball.x):
             ballX_old = ball.x
             if ballY_old not in range(ball.y - 28, ball.y):
                 ballY_old = ball.y
-                trackBall(ball)
+                trackBall(ball, paddle2)
 
 
 # moves the ball returns new position
@@ -145,9 +155,9 @@ def checkHitBall(ball, paddle1, paddle2, ballDirX):
         global count
         count = 0
         startCount = True
+        getPaddleXY(paddle2)
         displayMessage(startCount)
         setStartCount(startCount)
-
         return -1  # ball hit the paddle 2
     else:
         return 1
@@ -234,7 +244,7 @@ def main():
     drawArena()
     drawPaddle(paddle1)
     drawPaddle(paddle2)
-    drawBall(ball, ballDirX, ballDirY)
+    drawBall(ball, ballDirX, ballDirY, paddle2)
     pygame.mouse.set_visible(0)  # make cursor invisible
 
     while True:  # main game loop
@@ -250,7 +260,7 @@ def main():
         drawArena()
         drawPaddle(paddle1)
         drawPaddle(paddle2)
-        drawBall(ball, ballDirX, ballDirY)
+        drawBall(ball, ballDirX, ballDirY, paddle2)
 
         ball = moveBall(ball, ballDirX, ballDirY)
         ballDirX, ballDirY = checkEdgeCollision(ball, ballDirX, ballDirY)
