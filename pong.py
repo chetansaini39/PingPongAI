@@ -27,7 +27,16 @@ foundInCell = 1000
 foundInCellY = 1000
 ballX_old = 0
 ballY_old = 0
+global listArr
+listArr=[]
 
+def addToList(item):
+    listArr.append(item)
+
+def getListSet(listArr):
+    listTemp=list(set(listArr))
+    listArr=[]
+    return listTemp
 
 # Draws the arena the game will be played in.
 def drawArena():
@@ -72,6 +81,7 @@ def trackBall(ball, paddle2):
                 break
     # render text
     label = myfont.render(str(cell) + str(celly), 1, (255, 255, 0))
+    listArr.append(str(cell) + str(celly)) # add the elements to the list
     DISPLAYSURF.blit(label, (cell * 36, celly * 26))
     # getPaddleXY(paddle2)
     # print 'X,Y ', cell, celly
@@ -147,6 +157,7 @@ def checkHitBall(ball, paddle1, paddle2, ballDirX):
         displayMessage(startCount)
         setStartCount(startCount)
         print 'Stopped Collecting Values'
+        print getListSet(listArr)
 
         return -1  # ball hit the paddle 1
     elif ballDirX == 1 and paddle2.left == ball.right and paddle2.top < ball.top and paddle2.bottom > ball.bottom:
