@@ -61,7 +61,7 @@ def getPaddleXY(paddle2):
     return paddle2X,paddle2Y
 
 # Function to track ball is in which grid cell
-def trackBall(ball, paddle2):
+def trackBall(ball):
     cell = 0
     celly = 0
     global foundInCell, foundInCellY
@@ -115,19 +115,19 @@ def drawPaddle(paddle):
 def drawBall(ball, ballDirX, ballDirY, paddle2):
     global ballX_old, foundInCell, foundInCellY, ballY_old
     pygame.draw.rect(DISPLAYSURF, WHITE, ball)
-    trackBall(ball, paddle2)
+    trackBall(ball)
     if ballDirX == -1:  # left
         if ballX_old not in range(ball.x, ball.x + 38):
             ballX_old = ball.x
             if ballY_old not in range(ball.y, ball.y + 28):
                 ballY_old = ball.y
-                trackBall(ball, paddle2)
+                trackBall(ball)
     else:
         if ballX_old not in range(ball.x - 38, ball.x):
             ballX_old = ball.x
             if ballY_old not in range(ball.y - 28, ball.y):
                 ballY_old = ball.y
-                trackBall(ball, paddle2)
+                trackBall(ball)
 
 
 # moves the ball returns new position
