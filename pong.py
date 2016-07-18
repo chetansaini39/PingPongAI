@@ -28,15 +28,21 @@ foundInCellY = 1000
 ballX_old = 0
 ballY_old = 0
 global listArr
-listArr=[]
+listArr = []
+
 
 def addToList(item):
-    listArr.append(item)
+    if item not in listArr:
+        print 'Added ', item
+        listArr.append(item)
+
 
 def getListSet(listArr):
-    listTemp=list(set(listArr))
-    listArr=[]
+    listTemp = list(set(listArr))
+    print 'Total Elements in List -> ', len(listArr)
+    listArr = []
     return listTemp
+
 
 # Draws the arena the game will be played in.
 def drawArena():
@@ -57,8 +63,13 @@ def getPaddleXY(paddle2):
     print ' Hit at location ', paddle2X, paddle2Y
     # render text
     label = BASICFONT.render(str(paddle2X / 38) + str(paddle2Y / 28), 1, (255, 99, 71))
-    DISPLAYSURF.blit(label, (paddle2X/38, paddle2Y/28))
-    return paddle2X,paddle2Y
+    DISPLAYSURF.blit(label, (paddle2X / 38, paddle2Y / 28))
+    return paddle2X, paddle2Y
+
+
+def getCellLocation(coordinate):
+    return str(1) + str(coordinate[1] / 26)
+
 
 # Function to track ball is in which grid cell
 def trackBall(ball):
@@ -76,15 +87,15 @@ def trackBall(ball):
     if foundInCellY != celly:
         for y0 in range(LINETHICKNESS, 280, 28):
             y1 = y0 + 28
-            celly += 1
             if (ball.y + LINETHICKNESS) in range(y0, y1):
                 break
+            celly += 1
     # render text
     label = myfont.render(str(cell) + str(celly), 1, (255, 255, 0))
-    listArr.append(str(cell) + str(celly)) # add the elements to the list
     DISPLAYSURF.blit(label, (cell * 36, celly * 26))
-    # getPaddleXY(paddle2)
-    # print 'X,Y ', cell, celly
+    if startCount:
+        # print 'Appending X,Y ', cell, celly
+        addToList(str(cell) + str(celly))
 
 
 def displayMessage(startCount):
@@ -95,7 +106,6 @@ def displayMessage(startCount):
 
 
 def setStartCount(value):
-    global startCount
     startCount = value
 
 
@@ -144,29 +154,44 @@ def checkEdgeCollision(ball, ballDirX, ballDirY):
         ballDirY = ballDirY * -1  # ball hit the top and bottom walls
     if ball.left == (LINETHICKNESS) or ball.right == (WINDOWWIDTH - LINETHICKNESS):
         ballDirX = ballDirX * -1  # ball hit the left or right walls
+        global count
+        count = 0
+        startCount = False
+        displayMessage(startCount)
+        setStartCount(startCount)
+        print 'Stopped Collecting Values, printing values'
+        addToList('00')
+        if len(listArr)> 20:
+            fileObject.write(str(getListSet(listArr)))
+            fileObject.write('\n')
+        # fileObject.write(getCellLocation(getPaddleXY(paddle1)))  # write paddle location
+        print getListSet(listArr)
     return ballDirX, ballDirY
 
 
 # Checks is the ball has hit a paddle, and 'bounces' ball off it.
 def checkHitBall(ball, paddle1, paddle2, ballDirX):
     if ballDirX == -1 and paddle1.right == ball.left and paddle1.top < ball.top and paddle1.bottom > ball.bottom:
+        # stop recording the value of X
         # positive value expereince
         global count
         count = 0
         startCount = False
         displayMessage(startCount)
         setStartCount(startCount)
-        print 'Stopped Collecting Values'
-        print getListSet(listArr)
-
+        print 'Stopped Collecting Values, printing values'
+        addToList(getCellLocation(getPaddleXY(paddle1)))
+        # print getListSet(listArr)
+        if len(listArr) > 20:
+            fileObject.write(str(getListSet(listArr)))
+            fileObject.write(str(getCellLocation(getPaddleXY(paddle1)))) # write paddle location
+            fileObject.write('\n')
         return -1  # ball hit the paddle 1
     elif ballDirX == 1 and paddle2.left == ball.right and paddle2.top < ball.top and paddle2.bottom > ball.bottom:
-        # start recording the value of X
         print 'Start Collecting Values'
         global count
         count = 0
         startCount = True
-        getPaddleXY(paddle2)
         displayMessage(startCount)
         setStartCount(startCount)
         return -1  # ball hit the paddle 2
@@ -222,6 +247,8 @@ def displayScore(score):
 # Main function
 def main():
     pygame.init()
+    global fileObject
+    fileObject = open('dataSet.txt', 'w', 1)
     global myfont
     global DISPLAYSURF
     myfont = pygame.font.SysFont("monospace", 15)
@@ -261,6 +288,8 @@ def main():
     while True:  # main game loop
         for event in pygame.event.get():
             if event.type == QUIT:
+                fileObject.flush()
+                fileObject.close()
                 pygame.quit()
                 sys.exit()
             # mouse movement commands
