@@ -160,13 +160,16 @@ def checkEdgeCollision(ball, ballDirX, ballDirY):
         ballDirX = ballDirX * -1  # ball hit the left or right walls
         global count
         count = 0
+        print 'Wall collision,Stopped Collecting Values, printing values,'
+        addToList('0')
         startCount = False
         displayMessage(startCount)
         setStartCount(startCount)
-        print 'Wall collision,Stopped Collecting Values, printing values,'
-        addToList('00')
         if len(listArr) > 20:
             listTemp = getListSet(listArr)
+            if listTemp > 20: # just keep the last 20 elements
+                n=len(listTemp) - 20
+                del listTemp[:n]
             print 'adding ', listTemp
             fileObject.write(str(listTemp))
             fileObject.write('\n')
@@ -190,10 +193,14 @@ def checkHitBall(ball, paddle1, paddle2, ballDirX):
         # addToList(getCellLocation(getPaddleXY(paddle1)))
         # print getListSet(listArr)
         if len(listArr) > 20:
+            paddleValues= getCellLocation(getPaddleXY(paddle1))
+            print 'Paddle ',paddleValues
+            addToList(paddleValues) # get paddle location and add it to list
             listTemp = getListSet(listArr)
-            print 'adding ', listTemp
+            if listTemp > 20:  # just keep the last 20 elements
+                n = len(listTemp) - 20
+                del listTemp[:n]
             fileObject.write(str(listTemp))
-            fileObject.write(str(getCellLocation(getPaddleXY(paddle1))))  # write paddle location
             fileObject.write('\n')
         return -1  # ball hit the paddle 1
     elif ballDirX == 1 and paddle2.left == ball.right and paddle2.top < ball.top and paddle2.bottom > ball.bottom:
