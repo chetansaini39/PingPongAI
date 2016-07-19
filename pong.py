@@ -15,6 +15,7 @@ WINDOWHEIGHT = 300
 LINETHICKNESS = 10
 PADDLESIZE = 50
 PADDLEOFFSET = 20
+global startCount
 startCount = False
 
 # Set up the colours
@@ -38,7 +39,7 @@ def addToList(item):
 
 
 def getListSet(listArr):
-    listTemp = list(set(listArr))
+    listTemp = listArr
     print 'Total Elements in List -> ', len(listArr)
     listArr = []
     return listTemp
@@ -94,7 +95,7 @@ def trackBall(ball):
     label = myfont.render(str(cell) + str(celly), 1, (255, 255, 0))
     DISPLAYSURF.blit(label, (cell * 36, celly * 26))
     if startCount:
-        # print 'Appending X,Y ', cell, celly
+        print 'Appending X,Y ', cell, celly
         addToList(str(cell) + str(celly))
 
 
@@ -159,10 +160,12 @@ def checkEdgeCollision(ball, ballDirX, ballDirY):
         startCount = False
         displayMessage(startCount)
         setStartCount(startCount)
-        print 'Stopped Collecting Values, printing values'
+        print 'Wall collision,Stopped Collecting Values, printing values,'
         addToList('00')
         if len(listArr)> 20:
-            fileObject.write(str(getListSet(listArr)))
+            listTemp=getListSet(listArr)
+            print 'adding ',listTemp
+            fileObject.write(str(listTemp))
             fileObject.write('\n')
         # fileObject.write(getCellLocation(getPaddleXY(paddle1)))  # write paddle location
         print getListSet(listArr)
@@ -180,10 +183,12 @@ def checkHitBall(ball, paddle1, paddle2, ballDirX):
         displayMessage(startCount)
         setStartCount(startCount)
         print 'Stopped Collecting Values, printing values'
-        addToList(getCellLocation(getPaddleXY(paddle1)))
+        # addToList(getCellLocation(getPaddleXY(paddle1)))
         # print getListSet(listArr)
         if len(listArr) > 20:
-            fileObject.write(str(getListSet(listArr)))
+            listTemp = getListSet(listArr)
+            print 'adding ', listTemp
+            fileObject.write(str(listTemp))
             fileObject.write(str(getCellLocation(getPaddleXY(paddle1)))) # write paddle location
             fileObject.write('\n')
         return -1  # ball hit the paddle 1
