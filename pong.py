@@ -33,15 +33,17 @@ listArr = []
 
 
 def addToList(item):
-    if item not in listArr:
-        print 'Added ', item
-        listArr.append(item)
+    if startCount:
+        if item not in listArr:
+            print 'Added ', item
+            listArr.append(item)
 
 
-def getListSet(listArr):
-    listTemp = listArr
-    print 'Total Elements in List -> ', len(listArr)
-    listArr = []
+def getListSet(listData):
+    listTemp = listData
+    print 'Total Elements in List -> ', len(listData)
+    global listArr
+    listArr=[]
     return listTemp
 
 
@@ -95,7 +97,7 @@ def trackBall(ball):
     label = myfont.render(str(cell) + str(celly), 1, (255, 255, 0))
     DISPLAYSURF.blit(label, (cell * 36, celly * 26))
     if startCount:
-        print 'Appending X,Y ', cell, celly
+        # print 'Appending X,Y ', cell, celly
         addToList(str(cell) + str(celly))
 
 
@@ -107,6 +109,7 @@ def displayMessage(startCount):
 
 
 def setStartCount(value):
+    global startCount
     startCount = value
 
 
@@ -162,11 +165,12 @@ def checkEdgeCollision(ball, ballDirX, ballDirY):
         setStartCount(startCount)
         print 'Wall collision,Stopped Collecting Values, printing values,'
         addToList('00')
-        if len(listArr)> 20:
-            listTemp=getListSet(listArr)
-            print 'adding ',listTemp
+        if len(listArr) > 20:
+            listTemp = getListSet(listArr)
+            print 'adding ', listTemp
             fileObject.write(str(listTemp))
             fileObject.write('\n')
+            del listTemp
         # fileObject.write(getCellLocation(getPaddleXY(paddle1)))  # write paddle location
         print getListSet(listArr)
     return ballDirX, ballDirY
@@ -189,7 +193,7 @@ def checkHitBall(ball, paddle1, paddle2, ballDirX):
             listTemp = getListSet(listArr)
             print 'adding ', listTemp
             fileObject.write(str(listTemp))
-            fileObject.write(str(getCellLocation(getPaddleXY(paddle1)))) # write paddle location
+            fileObject.write(str(getCellLocation(getPaddleXY(paddle1))))  # write paddle location
             fileObject.write('\n')
         return -1  # ball hit the paddle 1
     elif ballDirX == 1 and paddle2.left == ball.right and paddle2.top < ball.top and paddle2.bottom > ball.bottom:
