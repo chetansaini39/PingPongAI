@@ -1,6 +1,6 @@
 import pygame, sys
 from pygame.locals import *
-
+import csv
 # I have created grid, now i need to track in which grid the bol is
 
 
@@ -35,7 +35,7 @@ listArr = []
 def addToList(item):
     if startCount:
         if item not in listArr:
-            print 'Added ', item
+            # print 'Added ', item
             listArr.append(item)
 
 
@@ -171,8 +171,9 @@ def checkEdgeCollision(ball, ballDirX, ballDirY):
                 n=len(listTemp) - 20
                 del listTemp[:n]
             print 'adding ', listTemp
-            fileObject.write(str(listTemp))
-            fileObject.write('\n')
+            # fileObject.write(str(listTemp))
+            # fileObject.write('\n')
+            writeCSV.writerow(listTemp)
             del listTemp
         # fileObject.write(getCellLocation(getPaddleXY(paddle1)))  # write paddle location
         print getListSet(listArr)
@@ -200,8 +201,9 @@ def checkHitBall(ball, paddle1, paddle2, ballDirX):
             if listTemp > 20:  # just keep the last 20 elements
                 n = len(listTemp) - 20
                 del listTemp[:n]
-            fileObject.write(str(listTemp))
-            fileObject.write('\n')
+            writeCSV.writerow(listTemp)
+            # fileObject.write(str(listTemp))
+            # fileObject.write('\n')
         return -1  # ball hit the paddle 1
     elif ballDirX == 1 and paddle2.left == ball.right and paddle2.top < ball.top and paddle2.bottom > ball.bottom:
         print 'Start Collecting Values'
@@ -263,8 +265,9 @@ def displayScore(score):
 # Main function
 def main():
     pygame.init()
-    global fileObject
-    fileObject = open('dataSet.txt', 'w', 1)
+    global fileObject, writeCSV
+    fileObject = open('dataSet.csv', 'a', 1)
+    writeCSV=csv.writer(fileObject, dialect='excel')
     global myfont
     global DISPLAYSURF
     myfont = pygame.font.SysFont("monospace", 15)
