@@ -8,6 +8,7 @@ def main():
 
     if(is_connected()==True):
         try:
+            print 'Connected to internet,\nTrying to send Email'
             GMAIL_USERID = 'midtest7133@gmail.com'
             GMAIL_PASS = 'nokia#1234'
             GMAIL_RECIPIENT = 'chetansaini39@gmail.com'
@@ -21,6 +22,7 @@ def main():
         except smtplib.SMTPException:
             print "Error, authentication failed! Please check your username and password."
     else:
+        print 'System not Connected to Internet, retrying in 5 seconds'
         time.sleep(5) # sleep the thread for 5 seconds
         main()
 
@@ -32,6 +34,7 @@ def is_connected():
     # connect to the host -- tells us if the host is actually
     # reachable
     s = socket.create_connection((host, 80), 2)
+
     return True
   except:
      pass
