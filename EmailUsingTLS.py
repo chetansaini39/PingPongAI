@@ -8,7 +8,7 @@ def main():
 
     if(is_connected()==True):
         try:
-            print 'Connected to internet,\nTrying to send Email'
+            print 'Connected to internet\nTrying to send Email'
             GMAIL_USERID = 'midtest7133@gmail.com'
             GMAIL_PASS = 'nokia#1234'
             GMAIL_RECIPIENT = 'chetansaini39@gmail.com'
